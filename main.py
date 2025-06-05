@@ -1,9 +1,11 @@
-from src.HeadHunterAPI import HeadHunterAPI
-from src.JSONSaver import JSONFileHandler
-from src.Vacancy import Vacancy
+from src.headHunterAPI import HeadHunterAPI
+from src.jsonSaver import JSONFileHandler
+from utils.add_to_file import add_vacancy_to_file, delete_vacancy_from_file
+from utils.vacancies_by_keyword import get_vacancies_by_keyword
+from utils.vacancies_by_salary import get_top_vacancies_by_salary
 
 
-def user_interaction():
+def user_interaction() -> None:
     hh_api = HeadHunterAPI()
     file_handler = JSONFileHandler()
 
@@ -11,73 +13,25 @@ def user_interaction():
         print("\nВыберите действие:")
         print("1. Поиск вакансий по ключевому слову")
         print("2. Получить топ N вакансий по зарплате")
-        print("3. Получить вакансии с ключевым словом из файла")
-        print("4. Записать вакансию в файл")
-        print("5. Удалить вакансию из файла")
-        print("6. Выход")
+        print("3. Добавить вакансию в файл")
+        print("4. Удалить вакансию из файла")
+        print("5. Выход")
 
         choice = input("Введите номер действия: ")
 
         if choice == "1":
-            keyword = input("Введите поисковый запрос: ")
-            cantidad = int(input("Введите количество вакансий для получения: "))
-            vacancies = hh_api.get_vacancies(keyword)[0:cantidad]
-            if vacancies:
-                for vacancy in vacancies:
-                    print(
-                        f"Название: {vacancy['name']}, Компания: {vacancy['company']}, "
-                        f"Зарплата: {vacancy['salary']}, Ссылка: {vacancy['url']}, id{vacancy["id"]}"
-                    )
-            else:
-                print("Вакансии не найдены.")
-
+            get_vacancies_by_keyword(hh_api, file_handler)
         elif choice == "2":
-            n = int(input("Введите количество вакансий для получения по зарплате: "))
-            vacancies = file_handler.get_vacancies()
-            sorted_vacancies = sorted(vacancies, key=lambda x: x.get("salary", 0), reverse=True)[:n]
-            if sorted_vacancies:
-                for vacancy in sorted_vacancies:
-                    print(
-                        f"Название: {vacancy['name']}, Компания: {vacancy['company']},"
-                        f" Зарплата: {vacancy['salary']}, Ссылка: {vacancy['url']}"
-                    )
-            else:
-                print("Вакансии не найдены.")
-
+            get_top_vacancies_by_salary(file_handler)
         elif choice == "3":
-            keyword = input("Введите ключевое слово для поиска в файле: ")
-            vacancies = file_handler.get_vacancies(name=keyword)
-            if vacancies:
-                for vacancy in vacancies:
-                    print(
-                        f"Название: {vacancy['name']}, Компания: {vacancy['company']},"
-                        f" Зарплата: {vacancy['salary']}, Ссылка: {vacancy['url']}"
-                    )
-            else:
-                print("Вакансии не найдены.")
-
+            add_vacancy_to_file(file_handler)
         elif choice == "4":
-            name = input("Введите название вакансии: ")
-            company = input("Введите название компании: ")
-            salary = float(input("Введите зарплату (если не указана, введите 0): "))
-            url = input("Введите ссылку на вакансию: ")
-            id = int(input("Введите ID вакансии"))
-
-            vacancy = Vacancy(id=id, name=name, company=company, salary=salary, url=url)
-            file_handler.add_vacancy(vacancy.to_dict())
-            print("Вакансия добавлена в файл.")
-
+            delete_vacancy_from_file(file_handler)
         elif choice == "5":
-            vacancy_id = input("Введите ID вакансии для удаления: ")
-            file_handler.delete_vacancy(vacancy_id)
-            print(f"Вакансия с ID {vacancy_id} удалена из файла.")
-
-        elif choice == "6":
             print("Выход из программы.")
             break
-
         else:
-            print("Некорректный ввод. Пожалуйста, выберите действие от 1 до 6.")
+            print("Некорректный ввод. Пожалуйста, выберите действие от 1 до 5.")
 
 
 if __name__ == "__main__":

@@ -1,23 +1,21 @@
-from typing import Union
+from typing import Dict, Union
+
+from src.headHunterAPI import HeadHunterAPI
 
 
 class Vacancy:
-    __slots__ = ("id", "_name", "_company", "_salary", "_url")
+    __slots__ = ("id", "_name", "_salary", "_url", "snippet")
 
-    def __init__(self, id: int, name: str, company: str, salary: Union[int, float], url: str) -> None:
+    def __init__(self, id: int, name: str, salary: Union[int, float], url: str, snippet: str) -> None:
         self.id = id
         self._name = self.__validate_name(name)
-        self._company = self.__validate_company(company)
         self._salary = self.__validate_salary(salary)
         self._url = self.__validate_url(url)
+        self.snippet = snippet
 
     @property
     def name(self) -> str:
         return self._name
-
-    @property
-    def company(self) -> str:
-        return self._company
 
     @property
     def salary(self) -> Union[int, float]:
@@ -33,17 +31,22 @@ class Vacancy:
             return "Название вакансии не указано"
         return name
 
-    def __validate_company(self, company: str) -> str:
-        """Метод для валидации работодателя"""
-        if not isinstance(company, str) or not company:
-            return "Название компании-работодателя не указано"
-        return company
-
-    def __validate_salary(self, salary: Union[int, float]) -> Union[int, float]:
+    def __validate_salary(self, salary: Union[int, float, Dict[str, Union[int, float]]]) -> Union[int, float]:
         """Метод для валидации суммы заработной платы"""
-        if not isinstance(salary, (int, float)) or salary < 0:
+
+        if salary is None:
             return 0
-        return salary
+        if isinstance(salary, dict):
+            salary_from = salary.get("from")
+            salary_to = salary.get("to")
+            if salary_from is not None and salary_from > 0:
+                return salary_from
+            elif salary_to is not None and salary_to > 0:
+                return salary_to
+        if isinstance(salary, (int, float)) and salary >= 0:
+            return salary
+
+        return 0
 
     def __validate_url(self, url: str) -> str:
         """Метод для валидации ссылки на вакансию"""
@@ -51,38 +54,58 @@ class Vacancy:
             return "Ссылка не указана"
         return url
 
+    def to_dict(self) -> dict:
+        """Метод для приобразования в словарь"""
+        return {"id": self.id, "name": self.name, "salary": self.salary, "url": self.url, "snippet": self.snippet}
+
     def __lt__(self, other: "Vacancy") -> bool:
+        """Сравнеие <"""
         if not isinstance(other, Vacancy):
             return NotImplemented
         return self.salary < other.salary
 
     def __le__(self, other: "Vacancy") -> bool:
+        """Сравнеие <="""
         if not isinstance(other, Vacancy):
             return NotImplemented
         return self.salary <= other.salary
 
     def __eq__(self, other: object) -> bool:
+        """Сравнеие =="""
         if not isinstance(other, Vacancy):
             return NotImplemented
         return self.salary == other.salary
 
     def __ne__(self, other: object) -> bool:
+        """Сравнеие !="""
         if not isinstance(other, Vacancy):
             return NotImplemented
         return self.salary != other.salary
 
     def __gt__(self, other: "Vacancy") -> bool:
+        """Сравнеие >"""
         if not isinstance(other, Vacancy):
             return NotImplemented
         return self.salary > other.salary
 
     def __ge__(self, other: "Vacancy") -> bool:
+        """Сравнеие >="""
         if not isinstance(other, Vacancy):
             return NotImplemented
         return self.salary >= other.salary
 
     def __repr__(self) -> str:
-        return f"Vacancy(name='{self.name}', company='{self.company}', salary={self.salary}, url='{self.url}')"
+        """Вывод для отладки"""
+        return f"Vacancy(name='{self.name}', salary={self.salary}, url='{self.url}' , snippet= {self.snippet})"
 
-    def to_dict(self) -> dict:
-        return {"id": self.id, "name": self.name, "company": self.company, "salary": self.salary, "url": self.url}
+    def __str__(self) -> str:
+        """Вывод для строки"""
+        return f"{self.id} - {self.name}, salary={self.salary}, Ссылка : '{self.url}',требования : {self.snippet}"
+
+
+if __name__ == "__main__":
+    hh_api = HeadHunterAPI()
+    vacancies = hh_api.get_vacancies("Phyton")
+    for i in vacancies:
+        x = Vacancy(i["id"], i["name"], i["salary"], i["url"], i["snippet"]["requirement"])
+        print(x.salary)

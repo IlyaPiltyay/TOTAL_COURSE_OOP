@@ -4,14 +4,15 @@ from src.headHunterAPI import HeadHunterAPI
 
 
 class Vacancy:
-    __slots__ = ("id", "_name", "_salary", "_url", "snippet")
+    __slots__ = ("id", "_name", "_salary", "_url", "snippet", "_company")
 
-    def __init__(self, id: int, name: str, salary: Union[int, float], url: str, snippet: str) -> None:
+    def __init__(self, id: int, name: str, salary: Union[int, float], url: str, snippet: str, company: str) -> None:
         self.id = id
         self._name = self.__validate_name(name)
         self._salary = self.__validate_salary(salary)
         self._url = self.__validate_url(url)
         self.snippet = snippet
+        self._company = company
 
     @property
     def name(self) -> str:
@@ -24,6 +25,10 @@ class Vacancy:
     @property
     def url(self) -> str:
         return self._url
+
+    @property
+    def company(self) -> str:
+        return self._company
 
     def __validate_name(self, name: str) -> str:
         """Метод для валидации названия вакансии"""
@@ -56,7 +61,14 @@ class Vacancy:
 
     def to_dict(self) -> dict:
         """Метод для приобразования в словарь"""
-        return {"id": self.id, "name": self.name, "salary": self.salary, "url": self.url, "snippet": self.snippet}
+        return {
+            "id": self.id,
+            "name": self.name,
+            "salary": self.salary,
+            "url": self.url,
+            "snippet": self.snippet,
+            "company": self.company,
+        }
 
     def __lt__(self, other: "Vacancy") -> bool:
         """Сравнеие <"""
@@ -100,12 +112,12 @@ class Vacancy:
 
     def __str__(self) -> str:
         """Вывод для строки"""
-        return f"{self.id} - {self.name}, salary={self.salary}, Ссылка : '{self.url}',требования : {self.snippet}"
+        return f"ID: {self.id}\nНаименование: {self.name}\nЗарплата: {self.salary}\nСсылка: {self.url}\nТребования: \n{self.snippet}\nКомпания: {self.company}"
 
 
 if __name__ == "__main__":
     hh_api = HeadHunterAPI()
     vacancies = hh_api.get_vacancies("Phyton")
     for i in vacancies:
-        x = Vacancy(i["id"], i["name"], i["salary"], i["url"], i["snippet"]["requirement"])
-        print(x.salary)
+        x = Vacancy(i["id"], i["name"], i["salary"], i["url"], i["snippet"]["requirement"], i["employer"]["name"])
+        print(x, sep="\n")

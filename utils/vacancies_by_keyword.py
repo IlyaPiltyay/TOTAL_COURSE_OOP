@@ -13,6 +13,7 @@ def get_vacancies_by_keyword(hh_api, file_handler) -> None:
             salary=vacancy["salary"],
             url=vacancy["url"],
             snippet=vacancy["snippet"]["requirement"],
+            company=vacancy["employer"]["name"],
         )
         file_handler.add_vacancy(vacancy_instance.to_dict())
 

@@ -1,25 +1,22 @@
 import json
 from typing import Any
 
+from src.vacancy import Vacancy
+
 
 def get_top_vacancies_by_salary(file_handler: Any) -> None:
-
     count_vacancy = int(input("Введите количество вакансий для получения по зарплате: "))
 
-    with open(r"C:\Уроки\TCOURSE_OOP\data\vacancy.json", "r", encoding="utf-8") as file:
+    with open(r"data/vacancy.json", "r", encoding="utf-8") as file:
+        # загружаем словари из файла
         vacancies_data = json.load(file)
 
-        vacancies_with_salary = []
+    vacancies = []
+    for d in vacancies_data:
+        vacancy = Vacancy(**d)
+        vacancies.append(vacancy)
 
-        for vacancy in vacancies_data:
-            salary = vacancy.get("salary")
-            salary_from = salary.get("from", salary) if isinstance(salary, dict) else salary
+    top_vacancies = sorted(vacancies, reverse=True)[:count_vacancy]
 
-            if isinstance(salary_from, (int, float)) and salary_from >= 0:
-                vacancy["salary_from"] = salary_from
-                vacancies_with_salary.append(vacancy)
-
-        top_vacancies = sorted(vacancies_with_salary, key=lambda x: x["salary_from"], reverse=True)[:count_vacancy]
-
-        for vacancy in top_vacancies:
-            print(f'{vacancy["id"]} {vacancy["name"]} Зарплата: {vacancy["salary"]} {vacancy["url"]}')
+    for vacancy in top_vacancies:
+        print(vacancy)

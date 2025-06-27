@@ -55,6 +55,6 @@ class HeadHunterAPI(Base_API):
 
 if __name__ == "__main__":
     hh_api = HeadHunterAPI()
-    hh_vacancies = hh_api.get_vacancies("Python")
+    hh_vacancies = hh_api.get_vacancies("Продавец")
     for i in hh_vacancies:
-        print(type(i))
+        print(i["employer"]["name"])

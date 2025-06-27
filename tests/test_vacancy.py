@@ -24,7 +24,9 @@ class TestVacancy(unittest.TestCase):
         vacancy = Vacancy(4, "Data Scientist", {}, "http://example.com", "Experience in ML")
         self.assertEqual(vacancy.salary, 0)
 
-        vacancy = Vacancy(5, "Product Manager", {"from": 1500, "to": 2000}, "http://example.com", "Experience in Agile")
+        vacancy = Vacancy(
+            5, "Product Manager", {"from": 1500, "to": 2000}, "http://example.com", "Experience in Agile"
+        )
         self.assertEqual(vacancy.salary, 1500)
 
     def test_initialization_invalid_url(self):
@@ -38,7 +40,7 @@ class TestVacancy(unittest.TestCase):
             "name": "Software Engineer",
             "salary": 1000,
             "url": "http://example.com",
-            "snippet": "Experience in Python"
+            "snippet": "Experience in Python",
         }
         self.assertEqual(vacancy.to_dict(), expected_dict)
 
@@ -55,11 +57,15 @@ class TestVacancy(unittest.TestCase):
 
     def test_repr_and_str(self):
         vacancy = Vacancy(1, "Software Engineer", 1000, "http://example.com", "Experience in Python")
-        self.assertEqual(repr(vacancy),
-                         "Vacancy(name='Software Engineer', salary=1000, url='http://example.com' , snippet= Experience in Python)")
-        self.assertEqual(str(vacancy),
-                         "1 - Software Engineer, salary=1000, Ссылка : 'http://example.com',требования : Experience in Python")
+        self.assertEqual(
+            repr(vacancy),
+            "Vacancy(name='Software Engineer', salary=1000, url='http://example.com' , snippet= Experience in Python)",
+        )
+        self.assertEqual(
+            str(vacancy),
+            "1 - Software Engineer, salary=1000, Ссылка : 'http://example.com',требования : Experience in Python",
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

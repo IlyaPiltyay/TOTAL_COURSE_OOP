@@ -1,5 +1,6 @@
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import patch, Mock
 
 from src.headHunterAPI import HeadHunterAPI
 
@@ -8,19 +9,19 @@ from src.headHunterAPI import HeadHunterAPI
 def hh_api():
     return HeadHunterAPI()
 
+
 def test_init_attrs(hh_api):
     assert hh_api.url == "https://api.hh.ru/vacancies"
     assert "User-Agent" in hh_api.headers
     assert isinstance(hh_api.params, dict)
     assert hh_api.vacancies == []
 
+
 @patch("requests.get")
 def test_connect_success(mock_get, hh_api):
     fake_response = Mock()
     fake_response.status_code = 200
-    fake_response.json.return_value = {
-        "items": [{"id": 1}, {"id": 2}]
-    }
+    fake_response.json.return_value = {"items": [{"id": 1}, {"id": 2}]}
     mock_get.return_value = fake_response
 
     hh_api._connect("Python")
@@ -28,6 +29,7 @@ def test_connect_success(mock_get, hh_api):
     assert len(hh_api.vacancies) > 0
     for e in hh_api.vacancies:
         assert "id" in e
+
 
 @patch("requests.get")
 def test_connect_bad_status_code(mock_get, hh_api):
@@ -37,6 +39,7 @@ def test_connect_bad_status_code(mock_get, hh_api):
 
     with pytest.raises(ValueError):
         hh_api._connect("Python")
+
 
 @patch("requests.get")
 def test_connect_multiple_pages(mock_get, hh_api):
@@ -50,4 +53,3 @@ def test_connect_multiple_pages(mock_get, hh_api):
 
     hh_api._connect("Python")
     assert len(hh_api.vacancies) == 1
-

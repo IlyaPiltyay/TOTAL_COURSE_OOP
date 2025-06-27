@@ -72,7 +72,9 @@ if __name__ == "__main__":
     hh_api = HeadHunterAPI()
     vacancies = hh_api.get_vacancies("Python")
     for i in vacancies:
-        all_vacancies = Vacancy(i["id"], i["name"], i["salary"], i["url"], i["snippet"]["requirement"])
+        all_vacancies = Vacancy(
+            i["id"], i["name"], i["salary"], i["url"], i["snippet"]["requirement"], i["employer"]["name"]
+        )
         all_vacancies_dict = all_vacancies.to_dict()
         file_handler.add_vacancy(all_vacancies_dict)
         # file_handler.delete_vacancy("120769384")

@@ -8,7 +8,7 @@ def add_vacancy_to_file(file_handler) -> None:
     url = input("Введите ссылку на вакансию: ")
     snippet = input("Введите требования: ")
 
-    vacancy = Vacancy(id=id, name=name, salary=salary, url=url, snippet=snippet)
+    vacancy = Vacancy(id=id, name=name, salary=salary, url=url, snippet=snippet, company="Ozon")
     file_handler.add_vacancy(vacancy.to_dict())
     print("Вакансия добавлена в файл.")
 

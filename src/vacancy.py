@@ -12,7 +12,7 @@ class Vacancy:
         self._salary = self.__validate_salary(salary)
         self._url = self.__validate_url(url)
         self.snippet = snippet
-        self._company = company
+        self._company = self.__validate_company(company)
 
     @property
     def name(self) -> str:
@@ -36,6 +36,11 @@ class Vacancy:
             return "Название вакансии не указано"
         return name
 
+    def __validate_company(self, company: str) -> str:
+        """Метод для валидации названия вакансии"""
+        if not isinstance(company, str) or not company:
+            return "Название Компании не указано"
+        return company
     def __validate_salary(self, salary: Union[int, float, Dict[str, Union[int, float]]]) -> Union[int, float]:
         """Метод для валидации суммы заработной платы"""
 
@@ -108,7 +113,7 @@ class Vacancy:
 
     def __repr__(self) -> str:
         """Вывод для отладки"""
-        return f"Vacancy(name='{self.name}', salary={self.salary}, url='{self.url}' , snippet= {self.snippet})"
+        return f"Vacancy(name='{self.name}', salary={self.salary}, url='{self.url}' , snippet= {self.snippet},company= {self.company})"
 
     def __str__(self) -> str:
         """Вывод для строки"""

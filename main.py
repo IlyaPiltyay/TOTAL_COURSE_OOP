@@ -1,5 +1,11 @@
+import os
+
+from dotenv import load_dotenv
+
 from src.date_Base import DBManager
 from src.DB import create_database_and_tables
+
+load_dotenv(override=True)
 from src.headHunterAPI import HeadHunterAPI
 from src.jsonSaver import JSONFileHandler
 from src.vacancy import Vacancy
@@ -7,12 +13,23 @@ from utils.add_to_file import add_vacancy_to_file, delete_vacancy_from_file
 from utils.vacancies_by_keyword import get_vacancies_by_keyword
 from utils.vacancies_by_salary import get_top_vacancies_by_salary
 
+DB_NAME = os.getenv('DB_NAME')
+USER = os.getenv('USER')
+PASSWORD = os.getenv('PASSWORD')
+# Создание базы данных и таблиц
+create_database_and_tables(DB_NAME, USER, PASSWORD)
+db_manager = DBManager(DB_NAME, USER, PASSWORD)
+
 
 def user_interaction() -> None:
     """Функция взаимодействия с пользоватем"""
     try:
-        # hh_api = HeadHunterAPI()
-        db_manager = DBManager(dbname="job_database", user="postgres", password="6577")
+
+        DB_NAME = os.getenv('DB_NAME')
+        USER = os.getenv('USER')
+        PASSWORD = os.getenv('PASSWORD')
+        db_manager = DBManager(DB_NAME, USER, PASSWORD)
+        db_manager = DBManager(dbname=DB_NAME, user=USER, password=PASSWORD)
 
         while True:
             print("\nВыберите действие:")
@@ -96,10 +113,9 @@ def user_interaction() -> None:
 
 
 if __name__ == "__main__":
+    hh_api = HeadHunterAPI()
+    vacancies = hh_api.get_vacancies("Phyton")
+    for i in vacancies:
+        x = Vacancy(i["id"], i["name"], i["salary"], i["url"], i["snippet"]["requirement"], i["employer"]["name"])
+        db_manager.insert_vacancy(x)
     user_interaction()
-    DB_NAME = "job_database"
-    USER = "postgres"
-    PASSWORD = "6577"
-    # Создание базы данных и таблиц
-    create_database_and_tables(DB_NAME, USER, PASSWORD)
-    db_manager = DBManager("your_db_name", "your_user", "your_password")

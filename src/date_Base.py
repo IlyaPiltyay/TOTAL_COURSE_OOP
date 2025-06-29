@@ -1,9 +1,12 @@
+import os
 from typing import List, Tuple, Any
 
 import psycopg2
+from dotenv import load_dotenv
 
 from src.headHunterAPI import HeadHunterAPI
 from src.vacancy import Vacancy
+load_dotenv(override=True)
 
 
 class DBManager:
@@ -98,7 +101,10 @@ class DBManager:
 
 
 if __name__ == "__main__":
-    db_manager = DBManager(dbname="job_database", user="postgres", password="6577")
+    DB_NAME = os.getenv('DB_NAME')
+    USER = os.getenv('USER')
+    PASSWORD = os.getenv('PASSWORD')
+    db_manager = DBManager(dbname=DB_NAME, user=USER, password=PASSWORD)
 
     try:
         print("Companies and vacancies count:")

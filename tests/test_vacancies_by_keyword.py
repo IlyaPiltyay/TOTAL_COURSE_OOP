@@ -17,6 +17,7 @@ class TestGetVacanciesByKeyword(unittest.TestCase):
                 "salary": 100000,
                 "url": "http://example.com/1",
                 "snippet": {"requirement": "Experience in Python."},
+                "employer": {"name": "Ozon"},
             },
             {
                 "id": 2,
@@ -24,6 +25,7 @@ class TestGetVacanciesByKeyword(unittest.TestCase):
                 "salary": 150000,
                 "url": "http://example.com/2",
                 "snippet": {"requirement": "Expert in Python."},
+                "employer": {"name": "Ozon"},
             },
             {
                 "id": 3,
@@ -31,6 +33,7 @@ class TestGetVacanciesByKeyword(unittest.TestCase):
                 "salary": 120000,
                 "url": "http://example.com/3",
                 "snippet": {"requirement": "Experience in Java."},
+                "employer": {"name": "Ozon"},
             },
         ]
 
@@ -38,7 +41,8 @@ class TestGetVacanciesByKeyword(unittest.TestCase):
         get_vacancies_by_keyword(mock_hh_api, mock_file_handler)
         self.assertEqual(mock_file_handler.add_vacancy.call_count, 2)
         expected_vacancy_1 = Vacancy(
-            id=1, name="Python Developer", salary=100000, url="http://example.com/1", snippet="Experience in Python."
+            id=1, name="Python Developer", salary=100000, url="http://example.com/1", snippet="Experience in Python.",
+            company="Ozon"
         ).to_dict()
 
         expected_vacancy_2 = Vacancy(
@@ -47,6 +51,7 @@ class TestGetVacanciesByKeyword(unittest.TestCase):
             salary=150000,
             url="http://example.com/2",
             snippet="Expert in Python.",
+            company="Ozon",
         ).to_dict()
         mock_file_handler.add_vacancy.assert_any_call(expected_vacancy_1)
         mock_file_handler.add_vacancy.assert_any_call(expected_vacancy_2)

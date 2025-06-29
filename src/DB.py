@@ -1,4 +1,8 @@
+import os
+
 import psycopg2
+from dotenv import load_dotenv
+load_dotenv(override=True)
 
 
 def create_database_and_tables(dbname, user, password, host="localhost", port="5432"):
@@ -56,9 +60,9 @@ def create_database_and_tables(dbname, user, password, host="localhost", port="5
 
 
 if __name__ == "__main__":
-    DB_NAME = "job_database"
-    USER = "postgres"
-    PASSWORD = "6577"
+    DB_NAME = os.getenv('DB_NAME')
+    USER = os.getenv('USER')
+    PASSWORD = os.getenv('PASSWORD')
 
     # Создание базы данных и таблиц
     create_database_and_tables(DB_NAME, USER, PASSWORD)
